@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-v21/abc_action_bar_item_background_material.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-v21/abc_action_bar_item_background_material.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-v21/abc_edit_text_material.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-v21/abc_edit_text_material.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-v21/notification_action_background.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-v21/notification_action_background.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-v21/abc_btn_colored_material.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-v21/abc_btn_colored_material.xml"
+    }
+]

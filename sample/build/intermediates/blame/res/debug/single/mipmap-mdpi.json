@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/mipmap-mdpi/ic_launcher_round.png",
+        "source": "/Users/XiongFangyu/Desktop/TipViewManager/sample/src/main/res/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/mipmap-mdpi/ic_launcher.png",
+        "source": "/Users/XiongFangyu/Desktop/TipViewManager/sample/src/main/res/mipmap-mdpi/ic_launcher.png"
+    }
+]

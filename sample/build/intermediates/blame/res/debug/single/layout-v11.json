@@ -1,0 +1,26 @@
+[
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout-v11/notification_media_action.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout-v11/notification_media_action.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout-v11/notification_template_big_media_narrow.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout-v11/notification_template_big_media_narrow.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout-v11/notification_template_big_media.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout-v11/notification_template_big_media.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout-v11/notification_template_big_media_custom.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout-v11/notification_template_big_media_custom.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout-v11/notification_template_big_media_narrow_custom.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout-v11/notification_template_big_media_narrow_custom.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout-v11/notification_media_cancel_action.xml",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout-v11/notification_media_cancel_action.xml"
+    }
+]
