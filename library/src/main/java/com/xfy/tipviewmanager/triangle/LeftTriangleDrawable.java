@@ -6,8 +6,9 @@ import android.support.annotation.NonNull;
 
 /**
  * Created by XiongFangyu on 2017/6/26.
+ *
+ * 默认指向左边的三角形
  */
-
 public class LeftTriangleDrawable extends TriangleDrawable {
 
     public LeftTriangleDrawable() {}

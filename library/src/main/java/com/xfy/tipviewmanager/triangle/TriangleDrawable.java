@@ -13,8 +13,9 @@ import android.support.annotation.Nullable;
 
 /**
  * Created by XiongFangyu on 2017/6/26.
+ *
+ * 默认三角形基类
  */
-
 public abstract class TriangleDrawable extends Drawable {
     private static final int WIDTH = 60;
     private static final int HEIGHT = 30;
@@ -41,10 +42,8 @@ public abstract class TriangleDrawable extends Drawable {
     @Override
     public void draw(@NonNull Canvas canvas) {
         Rect bounds = getBounds();
-        float degreee = getRotateDegree();
         cs.initPath(bounds);
         canvas.save();
-//        canvas.rotate(degreee, bounds.centerX(), bounds.centerY());
         canvas.drawPath(cs.path, mPaint);
         canvas.restore();
     }

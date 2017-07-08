@@ -44,12 +44,12 @@
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_ic_star_half_black_36dp.png"
     },
     {
-        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_ic_star_half_black_16dp.png",
-        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_ic_star_half_black_16dp.png"
-    },
-    {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_list_focused_holo.9.png",
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_list_focused_holo.9.png"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_ic_star_half_black_16dp.png",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_ic_star_half_black_16dp.png"
     },
     {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_list_pressed_holo_light.9.png",
@@ -72,12 +72,12 @@
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_list_divider_mtrl_alpha.9.png"
     },
     {
-        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_tab_indicator_mtrl_alpha.9.png",
-        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_tab_indicator_mtrl_alpha.9.png"
-    },
-    {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/notification_bg_normal.9.png",
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_tab_indicator_mtrl_alpha.9.png",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_tab_indicator_mtrl_alpha.9.png"
     },
     {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_textfield_default_mtrl_alpha.9.png",
@@ -88,12 +88,12 @@
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_scrubber_primary_mtrl_alpha.9.png"
     },
     {
-        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_ic_star_black_16dp.png",
-        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_ic_star_black_16dp.png"
-    },
-    {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_scrubber_control_to_pressed_mtrl_000.png",
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_scrubber_control_to_pressed_mtrl_000.png"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_ic_star_black_16dp.png",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-xhdpi-v4/abc_ic_star_black_16dp.png"
     },
     {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-xhdpi-v4/abc_btn_radio_to_on_mtrl_000.png",

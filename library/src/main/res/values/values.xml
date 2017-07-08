@@ -3,4 +3,5 @@
     <color name="default_tip_text_color">#000</color>
     <dimen name="default_tip_text_size">15sp</dimen>
     <dimen name="default_tip_text_padding">5dp</dimen>
+    <dimen name="default_tip_margin">5dp</dimen>
 </resources>

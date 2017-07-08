@@ -40,12 +40,12 @@
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-mdpi-v4/abc_ic_star_half_black_16dp.png"
     },
     {
-        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-mdpi-v4/abc_textfield_activated_mtrl_alpha.9.png",
-        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-mdpi-v4/abc_textfield_activated_mtrl_alpha.9.png"
-    },
-    {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-mdpi-v4/abc_ic_menu_selectall_mtrl_alpha.png",
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-mdpi-v4/abc_ic_menu_selectall_mtrl_alpha.png"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-mdpi-v4/abc_textfield_activated_mtrl_alpha.9.png",
+        "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/drawable-mdpi-v4/abc_textfield_activated_mtrl_alpha.9.png"
     },
     {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/drawable-mdpi-v4/abc_menu_hardkey_panel_mtrl_mult.9.png",

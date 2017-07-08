@@ -12,12 +12,12 @@
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout/abc_activity_chooser_view_list_item.xml"
     },
     {
-        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout/test_tip_activity.xml",
-        "source": "/Users/XiongFangyu/Desktop/TipViewManager/sample/src/main/res/layout/test_tip_activity.xml"
-    },
-    {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout/abc_expanded_menu_layout.xml",
         "source": "/Users/XiongFangyu/.android/build-cache/5d76b99a16249b21e6714042c278fb12009b7d98/output/res/layout/abc_expanded_menu_layout.xml"
+    },
+    {
+        "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout/test_tip_activity.xml",
+        "source": "/Users/XiongFangyu/Desktop/TipViewManager/sample/src/main/res/layout/test_tip_activity.xml"
     },
     {
         "merged": "/Users/XiongFangyu/Desktop/TipViewManager/sample/build/intermediates/res/merged/debug/layout/abc_list_menu_item_icon.xml",

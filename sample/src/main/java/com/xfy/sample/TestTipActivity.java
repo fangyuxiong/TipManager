@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import com.xfy.tipviewmanager.ITip;
-import com.xfy.tipviewmanager.OnTipHideListener;
+import com.xfy.tipviewmanager.tip.ITip;
+import com.xfy.tipviewmanager.tip.OnTipHideListener;
 import com.xfy.tipviewmanager.TipManager;
 
 /**
