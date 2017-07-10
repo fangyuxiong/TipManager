@@ -239,6 +239,17 @@ public class TipManager {
     }
 
     /**
+     * 设置是否消耗手势事件（是否点击穿透）
+     * @param handle    true 消耗（点击不穿透）
+     * @return  this object
+     */
+    public TipManager setHandleTouchEevnt(boolean handle) {
+        if (tipViewLayout != null)
+            tipViewLayout.setHandleEvent(handle);
+        return this;
+    }
+
+    /**
      * 设置tip显示或隐藏时是否有动画
      * @param needTipAnim true: 有动画
      * @return this object

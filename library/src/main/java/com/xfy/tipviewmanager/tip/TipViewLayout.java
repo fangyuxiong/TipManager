@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.widget.FrameLayout;
 
 import com.xfy.tipviewmanager.TipManager;
@@ -25,8 +26,16 @@ import java.util.ArrayList;
  * {@link TipManager}
  */
 public class TipViewLayout extends FrameLayout {
+    private static final int MAX_CLICK_TIME = 200;
+    private static final int MAX_CLICK_DIS = 100;
 
     private ArrayList<NormalTip> normalTips;
+
+    private boolean handleEvent = false;
+
+    private NormalTip touchedTip = null;
+    private float downX, downY;
+    private long downTime = 0;
 
     public TipViewLayout(@NonNull Context context) {
         this(context, null);
@@ -65,6 +74,53 @@ public class TipViewLayout extends FrameLayout {
                 }
             }
         }
+    }
+
+    public void setHandleEvent(boolean handle) {
+        handleEvent = handle;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (normalTips == null || normalTips.isEmpty() || !handleEvent)
+            return false;
+        final float x = event.getX();
+        final float y = event.getY();
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                downX = x;
+                downY = y;
+                downTime = SystemClock.uptimeMillis();
+                boolean allHide = true;
+                for (NormalTip nt : normalTips) {
+                    if (nt != null && nt.isVisible()) {
+                        allHide = false;
+                        if (nt.isTouched(x, y)) {
+                            touchedTip = nt;
+                            break;
+                        }
+                    }
+                }
+                if (allHide)
+                    return false;
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (touchedTip == null)
+                    break;
+                if (SystemClock.uptimeMillis() - downTime <= MAX_CLICK_TIME && isClick(x, y)) {
+                    touchedTip.hide();
+                    touchedTip = null;
+                }
+                break;
+        }
+        return handleEvent;
+    }
+
+    private boolean isClick(float x, float y) {
+        float dx = x - downX;
+        float dy = y - downY;
+        return dx * dx + dy * dy <= MAX_CLICK_DIS * MAX_CLICK_DIS;
     }
 
     @Override

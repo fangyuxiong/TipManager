@@ -58,8 +58,16 @@ public class TestTipActivity extends Activity implements View.OnClickListener{
         if (TipManager.bindActivity(this).isTipShowing(v)) {
             TipManager.bindActivity(this).hideTipView(v);
         } else {
-            TipManager.bindActivity(this).showAdvancedTip(v, "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", textDelegate, ITip.Triangle.TOP);
+            TipManager.bindActivity(this)
+                    .setHandleTouchEevnt(true)
+                    .showAdvancedTip(v, "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", textDelegate, ITip.Triangle.TOP);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        TipManager.unbindActivity(this);
     }
 
     private static final ITextDelegate textDelegate = new TextDelegateImpl();
