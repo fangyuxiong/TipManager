@@ -43,9 +43,13 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     private ITipAnimation tipAnimation;
 
     public NormalTip() {
-        textDrawable = new TextDrawable();
+        textDrawable = newTextDrawable();
         paddingRect = new Rect();
         mTransformation = new Transformation();
+    }
+
+    protected TextDrawable newTextDrawable() {
+        return new TextDrawable();
     }
 
     @Override
@@ -59,8 +63,8 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
         final int triangleWidth = triangle != null ? triangle.getIntrinsicWidth() : 0;
         final int triangleHeight = triangle != null ? triangle.getIntrinsicHeight() : 0;
 
-        int textWidth = needWidth > 0 ? Math.min(needWidth, measureWidth) : measureWidth;
-        int textHeight = Math.min(needHeight, measureHeight);
+        int maxTextWidth = measureWidth - paddingRect.left - paddingRect.right;
+        int maxTextHeight = measureHeight - paddingRect.top - paddingRect.bottom;
 
         final Rect baseRect = new Rect(bounds);
 
@@ -71,6 +75,7 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
                     triangle.setBounds(baseRect.left, top, baseRect.left + triangleWidth, top + triangleHeight);
                 }
                 baseRect.left += triangleWidth;
+                maxTextWidth -= triangleWidth;
                 break;
             case Triangle.TOP:
                 if (triangle != null) {
@@ -78,18 +83,21 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
                     triangle.setBounds(left, baseRect.top, left + triangleWidth, baseRect.top + triangleHeight);
                 }
                 baseRect.top += triangleHeight;
+                maxTextHeight -= triangleHeight;
                 break;
             case Triangle.RIGHT:
                 if (triangle != null) {
                     int top = baseRect.top + triangleMargin;
                     triangle.setBounds(baseRect.right - triangleWidth, top, baseRect.right, top + triangleHeight);
                 }
+                maxTextWidth -= triangleWidth;
                 break;
             case Triangle.BOTTOM:
                 if (triangle != null) {
                     int left = baseRect.left + triangleMargin;
                     triangle.setBounds(left, baseRect.bottom - triangleHeight, left + triangleWidth, baseRect.bottom);
                 }
+                maxTextHeight -= triangleHeight;
                 break;
             default:        //NONE
                 if (triangle != null) {
@@ -97,6 +105,8 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
                 }
                 break;
         }
+        final int textWidth = needWidth > 0 ? Math.min(needWidth, maxTextWidth) : maxTextWidth;
+        final int textHeight = Math.min(needHeight, maxTextHeight);
         baseRect.left += paddingRect.left;
         baseRect.top += paddingRect.top;
         baseRect.right = baseRect.left + textWidth;
@@ -259,9 +269,9 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     }
 
     @Override
-    public ITip setText(CharSequence text) {
+    public ITip setTipText(CharSequence text) {
         if (text != null) {
-            textDrawable.setText(text.toString());
+            textDrawable.setText(text);
         } else {
             textDrawable.setText(null);
         }
@@ -270,21 +280,21 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     }
 
     @Override
-    public ITip setTextSize(float size) {
+    public ITip setTipTextSize(float size) {
         textDrawable.setTextSize(size);
         invalidateSelf();
         return this;
     }
 
     @Override
-    public ITip setTextColor(@ColorInt int color) {
+    public ITip setTipTextColor(@ColorInt int color) {
         textDrawable.setTextColor(color);
         invalidateSelf();
         return this;
     }
 
     @Override
-    public ITip setTextPadding(int pl, int pt, int pr, int pb) {
+    public ITip setTipTextPadding(int pl, int pt, int pr, int pb) {
         paddingRect.set(pl, pt, pr, pb);
         return this;
     }
@@ -301,7 +311,7 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     }
 
     @Override
-    public ITip setBackgroundDrawable(Drawable drawable) {
+    public ITip setTipBackgroundDrawable(Drawable drawable) {
         background = drawable;
         invalidateSelf();
         return this;

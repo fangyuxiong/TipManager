@@ -21,8 +21,8 @@ import android.text.TextUtils;
  */
 public class TextDrawable extends Drawable {
 
-    private String text;
-    private TextPaint textPaint;
+    protected CharSequence text;
+    protected TextPaint textPaint;
 
     private float translateX, translateY;
     private float scale = 1;
@@ -41,13 +41,13 @@ public class TextDrawable extends Drawable {
         canvas.save();
         canvas.translate(translateX, translateY);
         canvas.scale(scale, scale, bounds.centerX(), bounds.centerY());
-        canvas.drawText(text, left, y, textPaint);
+        canvas.drawText(text.toString(), left, y, textPaint);
         canvas.restore();
     }
 
     public float getTextLeft() {
         Rect bounds = getBounds();
-        final float len = getMeasureTextWidth();
+        final float len = getIntrinsicWidth();
         return bounds.left + (bounds.width() - len) / 2;
     }
 
@@ -82,14 +82,14 @@ public class TextDrawable extends Drawable {
         super.setBounds(l, t, r, b);
     }
 
-    public void setText(String text) {
+    public void setText(CharSequence text) {
         if (isTextSame(this.text, text))
             return;
         this.text = text;
         invalidateSelf();
     }
 
-    public String getText() {
+    public CharSequence getText() {
         return text;
     }
 
@@ -179,19 +179,19 @@ public class TextDrawable extends Drawable {
         return (int) getMeasureTextWidth();
     }
 
-    public float getMeasureTextWidth() {
+    private float getMeasureTextWidth() {
         if (TextUtils.isEmpty(text))
             return 0;
-        return textPaint.measureText(text);
+        return textPaint.measureText(text.toString());
     }
 
-    public float getMeasureTextHeight() {
+    private float getMeasureTextHeight() {
         final Paint.FontMetrics metrics = textPaint.getFontMetrics();
         final float height = metrics.bottom - metrics.top;
         return height;
     }
 
-    private boolean isTextSame(String t1, String t2) {
+    protected boolean isTextSame(CharSequence t1, CharSequence t2) {
         if (t1 == null && t2 == null)
             return true;
         if (t1 != null && t1.equals(t2))

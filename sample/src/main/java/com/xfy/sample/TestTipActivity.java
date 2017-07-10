@@ -1,15 +1,20 @@
 package com.xfy.sample;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import com.xfy.tipviewmanager.TipManager;
+import com.xfy.tipviewmanager.tip.ITextDelegate;
 import com.xfy.tipviewmanager.tip.ITip;
 import com.xfy.tipviewmanager.tip.OnTipHideListener;
-import com.xfy.tipviewmanager.TipManager;
 
 /**
  * Created by XiongFangyu on 2017/6/26.
@@ -53,7 +58,23 @@ public class TestTipActivity extends Activity implements View.OnClickListener{
         if (TipManager.bindActivity(this).isTipShowing(v)) {
             TipManager.bindActivity(this).hideTipView(v);
         } else {
-            TipManager.bindActivity(this).showTipView(v, "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", ITip.Triangle.TOP);
+            TipManager.bindActivity(this).showAdvancedTip(v, "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", textDelegate, ITip.Triangle.TOP);
+        }
+    }
+
+    private static final ITextDelegate textDelegate = new TextDelegateImpl();
+
+    private static class TextDelegateImpl implements ITextDelegate {
+        ForegroundColorSpan redSpan;
+        TextDelegateImpl() {
+            redSpan = new ForegroundColorSpan(Color.BLUE);
+        }
+
+        @Override
+        public CharSequence parseText(CharSequence src) {
+            SpannableStringBuilder stringBuilder = SpannableStringBuilder.valueOf(src);
+            stringBuilder.setSpan(redSpan, 0, src.length() >> 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return stringBuilder;
         }
     }
 }

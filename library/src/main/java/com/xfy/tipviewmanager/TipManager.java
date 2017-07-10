@@ -14,6 +14,9 @@ import android.view.WindowManager;
 
 import com.xfy.tipviewmanager.anim.DefaultTipAnimation;
 import com.xfy.tipviewmanager.anim.ITipAnimation;
+import com.xfy.tipviewmanager.tip.AdvancedTip;
+import com.xfy.tipviewmanager.tip.IAdvancedTip;
+import com.xfy.tipviewmanager.tip.ITextDelegate;
 import com.xfy.tipviewmanager.tip.ITip;
 import com.xfy.tipviewmanager.tip.NormalTip;
 import com.xfy.tipviewmanager.tip.TipViewLayout;
@@ -149,7 +152,8 @@ public class TipManager {
 
     /**
      * 显示和targetView对应的tip，若{@link #tips}中不包含对应tip，则创建一个tip，并保存
-     * 若包含，则使用已有tip，然后通过{@link #initTip(View, ITip, CharSequence, int)}设置tip的位置及其他信息
+     * 若包含，且tip为{@link IAdvancedTip}，删除并重新创建
+     * 若包含，且tip为{@link NormalTip}，则使用已有tip，然后通过{@link #initTip(View, ITip, CharSequence, int)}设置tip的位置及其他信息
      * 并显示
      * @param targetView    需要显示tip指向的view
      * @param text          tip中的文字
@@ -160,6 +164,10 @@ public class TipManager {
         if (tipViewLayout == null)
             return null;
         ITip tip = findTip(targetView);
+        if (tip != null && tip instanceof IAdvancedTip) {
+            removeTipView(targetView);
+            tip = null;
+        }
         if (tip == null) {
             tip = new NormalTip();
             saveTip(targetView, tip);
@@ -170,6 +178,40 @@ public class TipManager {
         tipViewLayout.addNormalTip(tip);
         tip.show();
         return tip;
+    }
+
+    /**
+     * 显示和targetView对应的{@link IAdvancedTip}，若{@link #tips}中对应的tip不是{@link IAdvancedTip}，
+     * 则删除并重新创建；若{@link #tips}中不包含对应tip，则创建一个{@link AdvancedTip}
+     * 通过{@link #initTip(View, ITip, CharSequence, int)}设置tip的位置及其他信息
+     * @param targetView    需要显示tip指向的view
+     * @param text          tip中的文字
+     * @param textDelegate  文字调整器，如果为空，还不如用{@link #showTipView(View, CharSequence, int)}
+     * @param direction     三角形指向方向 see {@link ITip.Triangle}
+     * @return              null if released
+     */
+    public @Nullable
+    IAdvancedTip showAdvancedTip(View targetView, CharSequence text, @Nullable ITextDelegate textDelegate, @ITip.TriangleDirection int direction) {
+        if (tipViewLayout == null)
+            return null;
+        ITip tip = findTip(targetView);
+        if (tip != null) {
+            if (!(tip instanceof IAdvancedTip)) {
+                removeTipView(targetView);
+                tip = null;
+            }
+        }
+        if (tip == null) {
+            tip = new AdvancedTip();
+            saveTip(targetView, tip);
+        }
+        tip.setNeedAnimation(needTipAnim)
+                .setTipAnimation(tipAnimation);
+        ((IAdvancedTip) tip).setTextDelegate(textDelegate);
+        initTip(targetView, tip, text, direction);
+        tipViewLayout.addNormalTip(tip);
+        tip.show();
+        return (IAdvancedTip) tip;
     }
 
     /**
@@ -296,6 +338,8 @@ public class TipManager {
      * 设置tip文字信息，背景信息，位置信息等
      * @param targetView    根据targetView及其位置信息显示tip
      * @param tip           may be {@link NormalTip} or {@link com.xfy.tipviewmanager.tip.IAdvancedTip}
+     *                      目前{@link com.xfy.tipviewmanager.tip.IAdvancedTip}的实现为{@link AdvancedTip}，
+     *                      是{@link NormalTip}的子类
      * @param text          tip需要显示的文案
      * @param direction     三角形指向 see {@link ITip.Triangle}
      */
@@ -305,11 +349,11 @@ public class TipManager {
         targetView.getLocationInWindow(loc);
         rect.offset(loc[0], loc[1] - statusHeight);
 
-        tip.setText(text);
-        tip.setTextColor(textColor);
-        tip.setTextSize(textSize);
-        tip.setTextPadding(textPadding.left, textPadding.top, textPadding.right, textPadding.bottom);
-        tip.setBackgroundDrawable(background.getConstantState().newDrawable());
+        tip.setTipText(text);
+        tip.setTipTextColor(textColor);
+        tip.setTipTextSize(textSize);
+        tip.setTipTextPadding(textPadding.left, textPadding.top, textPadding.right, textPadding.bottom);
+        tip.setTipBackgroundDrawable(background.getConstantState().newDrawable());
         tip.setTriangleDirection(direction);
         if (direction != ITip.Triangle.NONE)
             tip.setTriangleDrawable(triangles[direction - 1].getConstantState().newDrawable());
@@ -320,6 +364,8 @@ public class TipManager {
 
     /**
      * 当tip为{@link NormalTip}时，设置tip位置信息
+     * 目前{@link com.xfy.tipviewmanager.tip.IAdvancedTip}的实现为{@link AdvancedTip}，
+     * 是{@link NormalTip}的子类
      * @param viewRect      view的位置信息
      * @param tip           普通tip，使用drawable展示
      * @param direction     三角形指向 see {@link ITip.Triangle}
@@ -335,12 +381,17 @@ public class TipManager {
             int centerX = viewRect.centerX();
             left = centerX - (needWidth >> 1);
             right = centerX + (needWidth >> 1);
+            final int maxRight = screenWidth - marginEdge;
             if (left < marginEdge) {
                 left = marginEdge;
                 right = left + needWidth;
-            } else if (right > screenWidth - marginEdge) {
-                right = screenWidth - marginEdge;
+                if (right > maxRight)
+                    right = maxRight;
+            } else if (right > maxRight) {
+                right = maxRight;
                 left = right - needWidth;
+                if (left < marginEdge)
+                    left = marginEdge;
             }
             if (direction == ITip.Triangle.TOP) {
                 top = viewRect.bottom;

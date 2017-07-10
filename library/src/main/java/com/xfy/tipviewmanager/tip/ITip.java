@@ -80,21 +80,21 @@ public interface ITip {
      * @param text  显示文案
      * @return  this object
      */
-    ITip setText(CharSequence text);
+    ITip setTipText(CharSequence text);
 
     /**
      * 设置文字大小
      * @param size  单位 px
      * @return this object
      */
-    ITip setTextSize(float size);
+    ITip setTipTextSize(float size);
 
     /**
      * 设置文字颜色
      * @param color 文字颜色
      * @return  this object
      */
-    ITip setTextColor(@ColorInt int color);
+    ITip setTipTextColor(@ColorInt int color);
 
     /**
      * 设置文字和背景之间的距离
@@ -104,7 +104,7 @@ public interface ITip {
      * @param pb
      * @return  this object
      */
-    ITip setTextPadding(int pl, int pt, int pr, int pb);
+    ITip setTipTextPadding(int pl, int pt, int pr, int pb);
 
     /**
      * 设置箭头左边距或上边距
@@ -118,7 +118,7 @@ public interface ITip {
      * @param drawable
      * @return  this object
      */
-    ITip setBackgroundDrawable(Drawable drawable);
+    ITip setTipBackgroundDrawable(Drawable drawable);
 
     /**
      * 设置三角形，需要跟三角形方向对应
