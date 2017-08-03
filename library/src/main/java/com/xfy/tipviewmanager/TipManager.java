@@ -165,6 +165,24 @@ public class TipManager {
      * @return null if released
      */
     public @Nullable ITip showTipView(View targetView, CharSequence text, @ITip.TriangleDirection int direction) {
+        return showTipView(targetView, text, 0, 0, direction);
+    }
+
+    /**
+     * 显示和targetView对应的tip，若{@link #tips}中不包含对应tip，则创建一个tip，并保存
+     * 若包含，且tip为{@link IAdvancedTip}，删除并重新创建
+     * 若包含，且tip为{@link NormalTip}，则使用已有tip，然后通过{@link #initTip(View, ITip, CharSequence, int)}设置tip的位置及其他信息
+     * 并显示
+     * @param targetView    需要显示tip指向的view
+     * @param text          tip中的文字
+     * @param preTx         布局此tip时x移动距离
+     * @param preTy         布局此tip时y移动距离
+     * @param direction     三角形指向方向 see {@link ITip.Triangle}
+     * @return
+     */
+    public
+    @Nullable
+    ITip showTipView(View targetView, CharSequence text, int preTx, int preTy, @ITip.TriangleDirection int direction) {
         if (tipViewLayout == null)
             return null;
         ITip tip = findTip(targetView);
@@ -179,7 +197,7 @@ public class TipManager {
         tip.setNeedAnimation(needTipAnim)
                 .setTipAnimation(tipAnimation);
         Rect viewRect = initTip(targetView, tip, text, direction);
-        tipViewLayout.addTip(tip, viewRect, direction);
+        tipViewLayout.addTip(tip, viewRect, preTx, preTy, direction);
         tip.show();
         return tip;
     }
@@ -196,6 +214,25 @@ public class TipManager {
      */
     public @Nullable
     IAdvancedTip showAdvancedTip(View targetView, CharSequence text, @Nullable ITextDelegate textDelegate, @ITip.TriangleDirection int direction) {
+        return showAdvancedTip(targetView, text, 0, 0, textDelegate, direction);
+    }
+
+    /**
+     * 显示和targetView对应的{@link IAdvancedTip}，若{@link #tips}中对应的tip不是{@link IAdvancedTip}，
+     * 则删除并重新创建；若{@link #tips}中不包含对应tip，则创建一个{@link AdvancedTip}
+     * 通过{@link #initTip(View, ITip, CharSequence, int)}设置tip的位置及其他信息
+     * @param targetView    需要显示tip指向的view
+     * @param text          tip中的文字
+     * @param preTx         布局此tip时x移动距离
+     * @param preTy         布局此tip时y移动距离
+     * @param textDelegate  文字调整器，如果为空，还不如用{@link #showTipView(View, CharSequence, int)}
+     * @param direction     三角形指向方向 see {@link ITip.Triangle}
+     * @return null if released
+     */
+    public
+    @Nullable
+    IAdvancedTip showAdvancedTip(View targetView, CharSequence text, int preTx, int preTy,
+                                 @Nullable ITextDelegate textDelegate, @ITip.TriangleDirection int direction) {
         if (tipViewLayout == null)
             return null;
         ITip tip = findTip(targetView);
@@ -213,7 +250,7 @@ public class TipManager {
                 .setTipAnimation(tipAnimation);
         ((IAdvancedTip) tip).setTextDelegate(textDelegate);
         Rect viewRect = initTip(targetView, tip, text, direction);
-        tipViewLayout.addTip(tip, viewRect, direction);
+        tipViewLayout.addTip(tip, viewRect, preTx, preTy, direction);
         tip.show();
         return (IAdvancedTip) tip;
     }

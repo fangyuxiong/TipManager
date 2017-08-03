@@ -16,6 +16,10 @@ class NormalTipInfo {
     @ITip.TriangleDirection
     int direction;
 
+    public int translateX;
+
+    public int translateY;
+
     public NormalTipInfo() {
     }
 
@@ -26,6 +30,14 @@ class NormalTipInfo {
     public NormalTipInfo(NormalTip tip, Rect viewRect, int dir) {
         this.tip = tip;
         this.viewRect = viewRect;
+        this.direction = dir;
+    }
+
+    public NormalTipInfo(NormalTip tip, Rect viewRect, int tx, int ty, int dir) {
+        this.tip = tip;
+        this.viewRect = viewRect;
+        this.translateX = tx;
+        this.translateY = ty;
         this.direction = dir;
     }
 

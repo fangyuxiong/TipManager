@@ -216,7 +216,7 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
         normalTips.add(info);
     }
 
-    public void addTip(ITip tip, Rect viewRect, @ITip.TriangleDirection int direction) {
+    public void addTip(ITip tip, Rect viewRect, int preTx, int preTy, @ITip.TriangleDirection int direction) {
         if (normalTips == null) {
             normalTips = new ArrayList<>();
         }
@@ -224,9 +224,9 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
             NormalTip nt = (NormalTip) tip;
             nt.setCallback(this);
             nt.setLayoutListener(this);
-            NormalTipInfo tipInfo = new NormalTipInfo(nt, viewRect, direction);
+            NormalTipInfo tipInfo = new NormalTipInfo(nt, viewRect, preTx, preTy, direction);
             addTipInfo(tipInfo);
-            initNormalTip(viewRect, nt, direction);
+            initNormalTip(viewRect, tipInfo);
         }
     }
 
@@ -235,56 +235,64 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
      * 目前{@link IAdvancedTip}的实现为{@link AdvancedTip}，
      * 是{@link NormalTip}的子类
      * @param viewRect      view的位置信息
-     * @param tip           普通tip，使用drawable展示
-     * @param direction     三角形指向 see {@link ITip.Triangle}
+     * @param tipInfo       包含tip和其他参数
      */
-    private void initNormalTip(Rect viewRect, NormalTip tip, @ITip.TriangleDirection int direction) {
+    private void initNormalTip(Rect viewRect, NormalTipInfo tipInfo) {
+        final NormalTip tip = tipInfo.tip;
+        final int direction = tipInfo.direction;
         final int needWidth = tip.getIntrinsicWidth();
         final int needHeight = tip.getIntrinsicHeight();
         final int tw = tip.getTriangleWidth();
         final int th = tip.getTriangleHeight();
+
         int left = 0, top = 0, right = 0, bottom = 0;
         int margin = 0;
-        if (direction == ITip.Triangle.TOP || direction == ITip.Triangle.BOTTOM) {
-            int centerX = viewRect.centerX();
-            left = centerX - (needWidth >> 1);
-            right = centerX + (needWidth >> 1);
-            final int maxRight = screenWidth - marginEdge;
-            if (left < marginEdge) {
-                left = marginEdge;
-                right = left + needWidth;
-                if (right > maxRight)
-                    right = maxRight;
-            } else if (right > maxRight) {
-                right = maxRight;
-                left = right - needWidth;
-                if (left < marginEdge)
+        switch (direction) {
+            case ITip.Triangle.TOP:
+            case ITip.Triangle.BOTTOM:
+                int centerX = viewRect.centerX() + tipInfo.translateX;
+                left = centerX - (needWidth >> 1);
+                right = centerX + (needWidth >> 1);
+                final int maxRight = screenWidth - marginEdge;
+                if (left < marginEdge) {
                     left = marginEdge;
-            }
-            if (direction == ITip.Triangle.TOP) {
-                top = viewRect.bottom;
-            } else {
-                top = viewRect.top - needHeight;
-            }
-            bottom = top + needHeight;
-            margin = centerX - left - (tw >> 1);
-        } else if (direction != ITip.Triangle.NONE) {
-            int centerY = viewRect.centerY();
-            top = centerY - (needHeight >> 1);
-            top = top < 0 ? 0 : top;
-            bottom = top + needHeight;
-            if (direction == ITip.Triangle.LEFT) {
-                left = viewRect.right;
-            } else {
-                left = viewRect.left - needWidth;
-            }
-            right = left + needWidth;
-            margin = centerY - top - (th >> 1);
-        } else {
-            left = viewRect.centerX() - (needWidth >> 1);
-            right = left + needWidth;
-            top = viewRect.centerY() - (needHeight >> 1);
-            bottom = top + needHeight;
+                    right = left + needWidth;
+                    if (right > maxRight)
+                        right = maxRight;
+                } else if (right > maxRight) {
+                    right = maxRight;
+                    left = right - needWidth;
+                    if (left < marginEdge)
+                        left = marginEdge;
+                }
+                if (direction == ITip.Triangle.TOP) {
+                    top = viewRect.bottom + tipInfo.translateY;
+                } else {
+                    top = viewRect.top - needHeight + tipInfo.translateY;
+                }
+                bottom = top + needHeight;
+                margin = centerX - left - (tw >> 1);
+                break;
+            case ITip.Triangle.LEFT:
+            case ITip.Triangle.RIGHT:
+                int centerY = viewRect.centerY() + tipInfo.translateY;
+                top = centerY - (needHeight >> 1);
+                top = top < 0 ? 0 : top;
+                bottom = top + needHeight;
+                if (direction == ITip.Triangle.LEFT) {
+                    left = viewRect.right + tipInfo.translateX;
+                } else {
+                    left = viewRect.left - needWidth + tipInfo.translateX;
+                }
+                right = left + needWidth;
+                margin = centerY - top - (th >> 1);
+                break;
+            default:
+                left = viewRect.centerX() - (needWidth >> 1) + tipInfo.translateX;
+                right = left + needWidth;
+                top = viewRect.centerY() - (needHeight >> 1) + tipInfo.translateY;
+                bottom = top + needHeight;
+                break;
         }
         tip.setTriangleMargin(margin);
         tip.setBounds(left, top, right, bottom);
@@ -297,7 +305,7 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
             int index = normalTips.indexOf(info);
             if (index >= 0) {
                 info = normalTips.get(index);
-                initNormalTip(info.viewRect, info.tip, info.direction);
+                initNormalTip(info.viewRect, info);
             }
         }
     }
