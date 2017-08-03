@@ -27,6 +27,8 @@ public class TextDrawable extends Drawable {
     private float translateX, translateY;
     private float scale = 1;
 
+    private LayoutListener layoutListener;
+
     public TextDrawable() {
         textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
     }
@@ -177,6 +179,16 @@ public class TextDrawable extends Drawable {
 
     public int getIntrinsicWidth() {
         return (int) getMeasureTextWidth();
+    }
+
+    public void setLayoutListener(LayoutListener layoutListener) {
+        this.layoutListener = layoutListener;
+    }
+
+    protected void layoutSelf() {
+        if (layoutListener != null) {
+            layoutListener.reqeustLayout(this);
+        }
     }
 
     private float getMeasureTextWidth() {

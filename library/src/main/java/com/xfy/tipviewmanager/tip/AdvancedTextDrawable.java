@@ -3,6 +3,7 @@ package com.xfy.tipviewmanager.tip;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.support.annotation.NonNull;
+import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextUtils;
 
@@ -31,6 +32,7 @@ public class AdvancedTextDrawable extends TextDrawable {
             return;
         }
         this.text = text;
+        layout = null;
         invalidateSelf();
     }
 
@@ -38,14 +40,28 @@ public class AdvancedTextDrawable extends TextDrawable {
     public void draw(@NonNull Canvas canvas) {
         if (TextUtils.isEmpty(text))
             return;
+        Rect bounds = getBounds();
         if (layout == null) {
-            layout = StaticLayout.Builder.obtain(text, 0, text.length(), textPaint, getIntrinsicWidth()).build();
+            layout = new StaticLayout(text, textPaint, bounds.width(), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+            layoutSelf();
+            return;
         }
         canvas.save();
-        Rect bounds = getBounds();
         canvas.clipRect(bounds);
         canvas.translate(bounds.left, bounds.top);
         layout.draw(canvas);
         canvas.restore();
+    }
+
+    @Override
+    public int getIntrinsicHeight() {
+        if (layout == null)
+            return super.getIntrinsicHeight();
+        return layout.getHeight();
+    }
+
+    @Override
+    public int getIntrinsicWidth() {
+        return super.getIntrinsicWidth();
     }
 }

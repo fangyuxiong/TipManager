@@ -5,7 +5,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
-import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -23,7 +22,7 @@ import com.xfy.tipviewmanager.anim.ITipAnimation;
  *
  * tip普通实现
  */
-public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimator.AnimatorUpdateListener {
+public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimator.AnimatorUpdateListener, LayoutListener<TextDrawable> {
 
     private Drawable background;
     private TextDrawable textDrawable;
@@ -32,7 +31,9 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     private int triangleMargin;
 
     private boolean needAnim = true;
-    private @TriangleDirection int direction;
+    private
+    @TriangleDirection
+    int direction;
     private ValueAnimator animator;
     private long showAnimTime = SHOW_ANIMATION_DURATION;
     private long hideAnimTime = HIDE_ANIMATION_DURATION;
@@ -41,11 +42,18 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
 
     private Transformation mTransformation;
     private ITipAnimation tipAnimation;
+    private LayoutListener layoutListener;
+
+    private boolean inHidingAnim = false;
+    private boolean needNotifyListener = true;
+
+    private float translateX, translateY;
 
     public NormalTip() {
         textDrawable = newTextDrawable();
         paddingRect = new Rect();
         mTransformation = new Transformation();
+        textDrawable.setLayoutListener(this);
     }
 
     protected TextDrawable newTextDrawable() {
@@ -127,7 +135,7 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
         if (isVisible()) {
             canvas.save();
             canvas.concat(mTransformation.getMatrix());
-//            debugDraw(canvas, getBounds(), 0xffff0000);
+            canvas.translate(translateX, translateY);
             if (background != null) {
                 background.draw(canvas);
             }
@@ -139,17 +147,6 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
             }
             canvas.restore();
         }
-    }
-
-    private Paint debugPaint;
-    private void debugDraw(Canvas canvas, Rect rect, int color) {
-        if (debugPaint == null) {
-            debugPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            debugPaint.setStyle(Paint.Style.STROKE);
-            debugPaint.setStrokeWidth(2);
-        }
-        debugPaint.setColor(color);
-        canvas.drawRect(rect, debugPaint);
     }
 
     @Override
@@ -200,7 +197,7 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     public ITip setAnimationTime(long showTime, long hideTime) {
         //用于动画结束后判断是隐藏动画还是显示动画，目前暂无别的好方法
         if (showTime == hideTime)
-            hideTime ++;
+            hideTime++;
         showAnimTime = showTime;
         hideAnimTime = hideTime;
         return this;
@@ -209,6 +206,7 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     @Override
     public ITip show() {
         setVisible(true, false);
+        inHidingAnim = false;
         if (needAnim) {
             initAnim(true);
             mTransformation.clear();
@@ -219,6 +217,10 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
 
     void release() {
         unscheduleSelf(hideTask);
+        layoutListener = null;
+        onTipHideListener = null;
+        if (textDrawable != null)
+            textDrawable.setLayoutListener(null);
     }
 
     private void initAnim(boolean show) {
@@ -245,12 +247,21 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
 
     @Override
     public ITip hide() {
-        if (needAnim) {
-            initAnim(false);
-            animator.start();
-        } else {
-            setVisible(false, false);
-            notifyHideListener();
+        return hide(true);
+    }
+
+    @Override
+    public ITip hide(boolean needNotify) {
+        if (isVisible() && !inHidingAnim) {
+            needNotifyListener = needNotify;
+            if (needAnim) {
+                initAnim(false);
+                inHidingAnim = true;
+                animator.start();
+            } else {
+                setVisible(false, false);
+                notifyHideListener();
+            }
         }
         return this;
     }
@@ -337,6 +348,14 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
         return this;
     }
 
+    @Override
+    public ITip setTranslateXY(float x, float y) {
+        translateX = x;
+        translateY = y;
+        invalidateSelf();
+        return this;
+    }
+
     private Runnable hideTask = new Runnable() {
         @Override
         public void run() {
@@ -372,6 +391,16 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
         return textHeight;
     }
 
+    public void setLayoutListener(LayoutListener listener) {
+        this.layoutListener = listener;
+    }
+
+    protected void layoutSelf() {
+        if (layoutListener != null) {
+            layoutListener.reqeustLayout(this);
+        }
+    }
+
     public int getTriangleWidth() {
         return triangle != null ? triangle.getIntrinsicWidth() : 0;
     }
@@ -381,6 +410,8 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     }
 
     private void notifyHideListener() {
+        if (!needNotifyListener)
+            return;
         if (onTipHideListener != null) {
             onTipHideListener.onHide(this);
         }
@@ -389,5 +420,11 @@ public class NormalTip extends Drawable implements ITip, Touchable, ValueAnimato
     @Override
     public boolean isTouched(float x, float y) {
         return getBounds().contains((int) x, (int) y);
+    }
+
+    @Override
+    public void reqeustLayout(TextDrawable obj) {
+        if (obj == textDrawable)
+            layoutSelf();
     }
 }

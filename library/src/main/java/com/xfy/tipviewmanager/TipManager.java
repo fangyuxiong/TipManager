@@ -5,7 +5,6 @@ import android.content.res.Resources;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +34,8 @@ import java.util.HashMap;
  * 调用{@link #bindActivity(Activity)}获取{@link TipManager}对象；不使用时(eg: 在{@link Activity#onDestroy()})
  * 调用{@link #unbindActivity(Activity)}释放{@link TipManager}对象并清除对象池中相应的Activity
  *
- * {@link ITip}实现计划有两种，一种为{@link NormalTip}，还有一种还没做..
+ * 目前有两种tip，一种普通tip {@link ITip}，满足大多数需求
+ * 另一种高级tip {@link IAdvancedTip}，可换行，可将文字换成图片等
  *
  * 设置项:
  *  {@link #setNeedTipAnim(boolean)}    设置显示或隐藏tip时是否需要动画
@@ -46,14 +46,20 @@ import java.util.HashMap;
  *  {@link #setTextColor(int)}          设置文字颜色
  *  {@link #setTextPadding(int, int, int, int)} 设置文字周围边距
  *  {@link #setMarginEdge(int)}         设置tip距离屏幕最小边距
+ *  {@link #setTouchToHideAll(boolean)} 设置点击隐藏所有tip
+ *  {@link #setTouchHideNeedNotfiy(boolean)} 设置点击隐藏是否产生回调
+ *  {@link #setHandleTouchEevnt(boolean)}   设置是否消耗手势事件（是否点击穿透）
  *
  * tip与{@link View}对象相对应，一个{@link View}对象只能有一个tip，TipManager内部维护一个对象池，来实现{@link View}和tip一一对应
  * 显示tip时将从对象池中寻找相对应的tip，若没找到，则新建一个tip对象，若找到，使用已有tip对象，然后设置相应的文字及位置，并显示
  *
  * {@link #showTipView(View, CharSequence, int)}    显示tip
+ * {@link #showAdvancedTip(View, CharSequence, ITextDelegate, int)}     显示高级tip {@link IAdvancedTip}
  * {@link #hideTipView(View)}                       隐藏tip
  * {@link #isTipShowing(View)}                      tip是否显示
  * {@link #removeTipView(View)}                     删除tip
+ * {@link #hideTipLayout()}                         隐藏tip layout
+ * {@link #showTipLayout()}                         显示tip layout 默认显示
  */
 public class TipManager {
     /**
@@ -116,8 +122,6 @@ public class TipManager {
     private Drawable background;
     private Drawable[] triangles;
     private int statusHeight = -404;
-    private int screenWidth, screenHeight;
-    private int marginEdge = 10;
     private boolean needTipAnim = true;
     private ITipAnimation tipAnimation;
 
@@ -174,8 +178,8 @@ public class TipManager {
         }
         tip.setNeedAnimation(needTipAnim)
                 .setTipAnimation(tipAnimation);
-        initTip(targetView, tip, text, direction);
-        tipViewLayout.addNormalTip(tip);
+        Rect viewRect = initTip(targetView, tip, text, direction);
+        tipViewLayout.addTip(tip, viewRect, direction);
         tip.show();
         return tip;
     }
@@ -208,8 +212,8 @@ public class TipManager {
         tip.setNeedAnimation(needTipAnim)
                 .setTipAnimation(tipAnimation);
         ((IAdvancedTip) tip).setTextDelegate(textDelegate);
-        initTip(targetView, tip, text, direction);
-        tipViewLayout.addNormalTip(tip);
+        Rect viewRect = initTip(targetView, tip, text, direction);
+        tipViewLayout.addTip(tip, viewRect, direction);
         tip.show();
         return (IAdvancedTip) tip;
     }
@@ -230,11 +234,29 @@ public class TipManager {
      * @param targetView
      */
     public void removeTipView(View targetView) {
-        if (tipViewLayout == null)
+        if (tipViewLayout == null || tips == null)
             return;
         ITip tip = tips.remove(targetView);
         if (tip != null) {
             tipViewLayout.removeTip(tip);
+        }
+    }
+
+    /**
+     * 隐藏tip view
+     */
+    public void hideTipLayout() {
+        if (tipViewLayout != null) {
+            tipViewLayout.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * 显示tip view
+     */
+    public void showTipLayout() {
+        if (tipViewLayout != null) {
+            tipViewLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -334,6 +356,30 @@ public class TipManager {
     }
 
     /**
+     * 设置点击后隐藏所有的tip
+     * @param hideAll   true：点击隐藏所有tip
+     * @return this object
+     */
+    public TipManager setTouchToHideAll(boolean hideAll) {
+        if (tipViewLayout != null) {
+            tipViewLayout.setTouchToHideAll(hideAll);
+        }
+        return this;
+    }
+
+    /**
+     * 设置点击隐藏是否产生回调
+     * @param need true: 回调
+     * @return this object
+     */
+    public TipManager setTouchHideNeedNotfiy(boolean need) {
+        if (tipViewLayout != null) {
+            tipViewLayout.setTouchHideNeedNotify(need);
+        }
+        return this;
+    }
+
+    /**
      * 设置tip距离屏幕边距
      * 当tip指向上方或下方时，若过长，tip距离左边屏幕至少有margin
      * 若左边屏幕剩余较多，则tip距离右边屏幕至少有margin
@@ -341,7 +387,8 @@ public class TipManager {
      * @return this object
      */
     public TipManager setMarginEdge(int margin) {
-        this.marginEdge = margin;
+        if (tipViewLayout != null)
+            tipViewLayout.setMarginEdge(margin);
         return this;
     }
 
@@ -354,7 +401,7 @@ public class TipManager {
      * @param text          tip需要显示的文案
      * @param direction     三角形指向 see {@link ITip.Triangle}
      */
-    private void initTip(View targetView, ITip tip, CharSequence text, @ITip.TriangleDirection int direction) {
+    private Rect initTip(View targetView, ITip tip, CharSequence text, @ITip.TriangleDirection int direction) {
         Rect rect = new Rect(0, 0, targetView.getWidth(), targetView.getHeight());
         int[] loc = new int[2];
         targetView.getLocationInWindow(loc);
@@ -368,69 +415,7 @@ public class TipManager {
         tip.setTriangleDirection(direction);
         if (direction != ITip.Triangle.NONE)
             tip.setTriangleDrawable(triangles[direction - 1].getConstantState().newDrawable());
-        if (tip instanceof NormalTip) {
-            initNormalTip(rect, (NormalTip) tip, direction);
-        }
-    }
-
-    /**
-     * 当tip为{@link NormalTip}时，设置tip位置信息
-     * 目前{@link com.xfy.tipviewmanager.tip.IAdvancedTip}的实现为{@link AdvancedTip}，
-     * 是{@link NormalTip}的子类
-     * @param viewRect      view的位置信息
-     * @param tip           普通tip，使用drawable展示
-     * @param direction     三角形指向 see {@link ITip.Triangle}
-     */
-    private void initNormalTip(Rect viewRect, NormalTip tip, @ITip.TriangleDirection int direction) {
-        final int needWidth = tip.getIntrinsicWidth();
-        final int needHeight = tip.getIntrinsicHeight();
-        final int tw = tip.getTriangleWidth();
-        final int th = tip.getTriangleHeight();
-        int left = 0, top = 0, right = 0, bottom = 0;
-        int margin = 0;
-        if (direction == ITip.Triangle.TOP || direction == ITip.Triangle.BOTTOM) {
-            int centerX = viewRect.centerX();
-            left = centerX - (needWidth >> 1);
-            right = centerX + (needWidth >> 1);
-            final int maxRight = screenWidth - marginEdge;
-            if (left < marginEdge) {
-                left = marginEdge;
-                right = left + needWidth;
-                if (right > maxRight)
-                    right = maxRight;
-            } else if (right > maxRight) {
-                right = maxRight;
-                left = right - needWidth;
-                if (left < marginEdge)
-                    left = marginEdge;
-            }
-            if (direction == ITip.Triangle.TOP) {
-                top = viewRect.bottom;
-            } else {
-                top = viewRect.top - needHeight;
-            }
-            bottom = top + needHeight;
-            margin = centerX - left - (tw >> 1);
-        } else if (direction != ITip.Triangle.NONE){
-            int centerY = viewRect.centerY();
-            top = centerY - (needHeight >> 1);
-            top = top < 0 ? 0 : top;
-            bottom = top + needHeight;
-            if (direction == ITip.Triangle.LEFT) {
-                left = viewRect.right;
-            } else {
-                left = viewRect.left - needWidth;
-            }
-            right = left + needWidth;
-            margin = centerY - top - (th >> 1);
-        } else {
-            left = viewRect.centerX() - (needWidth >> 1);
-            right = left + needWidth;
-            top = viewRect.centerY() - (needHeight >> 1);
-            bottom = top + needHeight;
-        }
-        tip.setTriangleMargin(margin);
-        tip.setBounds(left, top, right, bottom);
+        return rect;
     }
 
     private void saveTip(View view, ITip tip) {
@@ -472,9 +457,6 @@ public class TipManager {
         if (statusHeight != -404) {
             return;
         }
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        screenWidth = displayMetrics.widthPixels;
-        screenHeight = displayMetrics.heightPixels;
         int flags = context.getWindow().getAttributes().flags;
         if ((flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN) {
             statusHeight = 0;

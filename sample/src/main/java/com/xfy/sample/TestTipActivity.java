@@ -60,7 +60,7 @@ public class TestTipActivity extends Activity implements View.OnClickListener{
         } else {
             TipManager.bindActivity(this)
                     .setHandleTouchEevnt(true)
-                    .showAdvancedTip(v, "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", textDelegate, ITip.Triangle.TOP);
+                    .showAdvancedTip(v, "哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈哈", textDelegate, ITip.Triangle.TOP);
         }
     }
 

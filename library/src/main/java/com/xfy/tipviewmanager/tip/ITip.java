@@ -23,6 +23,7 @@ public interface ITip {
      * 默认隐藏tip动画时长
      */
     int HIDE_ANIMATION_DURATION = 150;
+
     interface Triangle {
         int NONE = 0;   //没有三角形
         int LEFT = 1;   //三角形指向左侧
@@ -33,20 +34,21 @@ public interface ITip {
 
     @IntDef({Triangle.NONE, Triangle.LEFT, Triangle.TOP, Triangle.RIGHT, Triangle.BOTTOM})
     @Retention(RetentionPolicy.SOURCE)
-    @interface TriangleDirection {}
+    @interface TriangleDirection {
+    }
 
     /**
      * 设置{@link #show()}或{@link #hide()}时是否使用动画
      * 默认使用
      * @param need 是否使用动画
-     * @return     this object
+     * @return this object
      */
     ITip setNeedAnimation(boolean need);
 
     /**
      * 若使用动画，则可自定义动画
      * @param tipAnimation  动画实现
-     * @return  this object
+     * @return this object
      */
     ITip setTipAnimation(ITipAnimation tipAnimation);
 
@@ -54,18 +56,29 @@ public interface ITip {
      * 设置显示和隐藏动画时间
      * @param showTime 显示动画时间
      * @param hideTime 隐藏动画时间
-     * @return  this object
+     * @return this object
      */
     ITip setAnimationTime(long showTime, long hideTime);
 
     ITip show();
 
+    /**
+     * 隐藏 默认通知监听
+     * @return this object
+     */
     ITip hide();
+
+    /**
+     * 隐藏
+     * @param needNotify true：通知监听
+     * @return this object
+     */
+    ITip hide(boolean needNotify);
 
     /**
      * 设置delay ms后自动消失
      * @param delay 延时，单位ms
-     * @return      this object
+     * @return this object
      */
     ITip autoHide(long delay);
 
@@ -78,7 +91,7 @@ public interface ITip {
     /**
      * 设置文案，暂时支持静态表情
      * @param text  显示文案
-     * @return  this object
+     * @return this object
      */
     ITip setTipText(CharSequence text);
 
@@ -92,7 +105,7 @@ public interface ITip {
     /**
      * 设置文字颜色
      * @param color 文字颜色
-     * @return  this object
+     * @return this object
      */
     ITip setTipTextColor(@ColorInt int color);
 
@@ -102,21 +115,21 @@ public interface ITip {
      * @param pt
      * @param pr
      * @param pb
-     * @return  this object
+     * @return this object
      */
     ITip setTipTextPadding(int pl, int pt, int pr, int pb);
 
     /**
      * 设置箭头左边距或上边距
      * @param margin
-     * @return  this object
+     * @return this object
      */
     ITip setTriangleMargin(int margin);
 
     /**
      * 设置背景
      * @param drawable
-     * @return  this object
+     * @return this object
      */
     ITip setTipBackgroundDrawable(Drawable drawable);
 
@@ -135,7 +148,7 @@ public interface ITip {
      *                  {@link Triangle#TOP}     三角形指向上方
      *                  {@link Triangle#RIGHT}   三角形指向右侧
      *                  {@link Triangle#BOTTOM}  三角形指向下方
-     * @return      this object
+     * @return this object
      */
     ITip setTriangleDirection(@TriangleDirection int direction);
 
@@ -145,4 +158,12 @@ public interface ITip {
      * @return this object
      */
     ITip setOnTipHideListener(OnTipHideListener onTipHideListener);
+
+    /**
+     * 设置translate
+     * @param x
+     * @param y
+     * @return this object
+     */
+    ITip setTranslateXY(float x, float y);
 }
