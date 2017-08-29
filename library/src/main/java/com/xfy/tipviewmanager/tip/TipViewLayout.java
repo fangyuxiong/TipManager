@@ -43,6 +43,7 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
 
     private int screenWidth;
     private int marginEdge;
+    private int tipBackgroundRadiu;
 
     public TipViewLayout(@NonNull Context context) {
         this(context, null);
@@ -294,6 +295,13 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
                 bottom = top + needHeight;
                 break;
         }
+        if (margin < tipBackgroundRadiu) {
+            margin = tipBackgroundRadiu;
+        } else {
+            int maxMargin = right - left - tipBackgroundRadiu - tw;
+            if (margin > maxMargin)
+                margin = maxMargin;
+        }
         tip.setTriangleMargin(margin);
         tip.setBounds(left, top, right, bottom);
     }
@@ -316,5 +324,9 @@ public class TipViewLayout extends FrameLayout implements LayoutListener<NormalT
 
     public void setTouchHideNeedNotify(boolean notify) {
         needNotfiyListener = notify;
+    }
+
+    public void setTipBackgroundRadiu(int tipBackgroundRadiu) {
+        this.tipBackgroundRadiu = tipBackgroundRadiu;
     }
 }

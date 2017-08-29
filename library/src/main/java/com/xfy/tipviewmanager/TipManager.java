@@ -140,6 +140,7 @@ public class TipManager {
         setTextPadding(defaultTextPadding, defaultTextPadding, defaultTextPadding, defaultTextPadding);
         setMarginEdge(res.getDimensionPixelOffset(R.dimen.default_tip_margin));
         setTipAnimation(new DefaultTipAnimation());
+        setTipBackgroundRadiu(res.getDimensionPixelOffset(R.dimen.default_tip_background_radiu));
     }
 
     /**
@@ -426,6 +427,18 @@ public class TipManager {
     public TipManager setMarginEdge(int margin) {
         if (tipViewLayout != null)
             tipViewLayout.setMarginEdge(margin);
+        return this;
+    }
+
+    /**
+     * 设置tip 背景圆角半径
+     * @param radiu tip背景圆角半径
+     * @return this object
+     */
+    public TipManager setTipBackgroundRadiu(int radiu) {
+        if (tipViewLayout != null) {
+            tipViewLayout.setTipBackgroundRadiu(radiu);
+        }
         return this;
     }
 

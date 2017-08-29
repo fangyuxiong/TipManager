@@ -10,7 +10,7 @@ Android Tip显示解决方案。
 `build.gradle`中添加:
 ```
 dependencies {
-    compile 'com.xfy.tipviewmanager:library:1.3'
+    compile 'com.xfy.tipviewmanager:library:1.4'
 }
 ```
 

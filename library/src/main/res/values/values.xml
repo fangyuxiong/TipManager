@@ -4,4 +4,5 @@
     <dimen name="default_tip_text_size">15sp</dimen>
     <dimen name="default_tip_text_padding">5dp</dimen>
     <dimen name="default_tip_margin">5dp</dimen>
+    <dimen name="default_tip_background_radiu">3dp</dimen>
 </resources>
