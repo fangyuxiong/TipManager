@@ -62,6 +62,16 @@ public class AdvancedTextDrawable extends TextDrawable {
 
     @Override
     public int getIntrinsicWidth() {
-        return super.getIntrinsicWidth();
+        if (layout == null)
+            return super.getIntrinsicWidth();
+        return (int) getLinesMaxWidth();
+    }
+
+    private float getLinesMaxWidth() {
+        float w = 0;
+        for (int i = 0, l = layout.getLineCount(); i < l;i ++) {
+            w = Math.max(layout.getLineWidth(i), w);
+        }
+        return w;
     }
 }

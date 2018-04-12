@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.view.ViewTreeObserver;
 import android.view.WindowManager;
 
 import com.xfy.tipviewmanager.anim.DefaultTipAnimation;
@@ -62,6 +63,11 @@ import java.util.HashMap;
  * {@link #showTipLayout()}                         显示tip layout 默认显示
  */
 public class TipManager {
+    private static boolean DEBUG = false;
+
+    public static void setDebug(boolean debug) {
+        DEBUG = debug;
+    }
     /**
      * 维护单一Activity对应单一TipManager的对象池
      */
@@ -71,14 +77,14 @@ public class TipManager {
      * 绑定一个Activity对象，若已经绑定过，则返回之前绑定的{@link TipManager}对象
      * 若没绑定，则创建一个新的对象，并保存到对象池中
      * @param activity
+     * @param container
      * @return 和Activity对象对应的 {@link TipManager}对象
      */
-    public static TipManager bindActivity(Activity activity) {
+    public static TipManager bindActivity(Activity activity, ViewGroup container) {
         TipManager tipManager = findTipManager(activity);
         if (tipManager != null) {
             return tipManager;
         }
-        ViewGroup container = (ViewGroup) activity.findViewById(android.R.id.content);
         TipViewLayout tipViewLayout = new TipViewLayout(activity);
         container.addView(tipViewLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
@@ -86,6 +92,17 @@ public class TipManager {
         tipManager.initActivityParams(activity);
         saveToPool(activity, tipManager);
         return tipManager;
+    }
+
+    /**
+     * 绑定一个Activity对象，若已经绑定过，则返回之前绑定的{@link TipManager}对象
+     * 若没绑定，则创建一个新的对象，并保存到对象池中
+     * @param activity
+     * @return 和Activity对象对应的 {@link TipManager}对象
+     */
+    public static TipManager bindActivity(Activity activity) {
+        ViewGroup container = (ViewGroup) activity.findViewById(android.R.id.content);
+        return bindActivity(activity, container);
     }
 
     /**
@@ -153,6 +170,35 @@ public class TipManager {
         if (tip != null)
             return tip.isShowing();
         return false;
+    }
+
+    /**
+     * 检查view是否已经layout并measure了
+     * @param targetView
+     * @param avalableListener
+     */
+    public void checkViewCanShowTip(final View targetView, final ViewAvalableListener avalableListener) {
+        if (tipViewLayout == null)
+            return;
+        if (targetView.getWidth() == 0 || targetView.getHeight() == 0) {
+            targetView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    targetView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    if (tipViewLayout == null)
+                        return;
+                    if (targetView.getWidth() == 0 || targetView.getHeight() == 0)
+                        return;
+                    if (avalableListener != null) {
+                        avalableListener.onViewAvalable(targetView);
+                    }
+                }
+            });
+        } else {
+            if (avalableListener != null) {
+                avalableListener.onViewAvalable(targetView);
+            }
+        }
     }
 
     /**
@@ -277,6 +323,26 @@ public class TipManager {
         ITip tip = tips.remove(targetView);
         if (tip != null) {
             tipViewLayout.removeTip(tip);
+        }
+    }
+
+    public static void removewAllTipView(Activity activity) {
+        if (activity == null) {
+            return;
+        }
+        TipManager tipManager = findTipManager(activity);
+        if (tipManager == null) {
+            return;
+        }
+        HashMap<View, ITip> tips = tipManager.tips;
+        if (tips != null && !tips.isEmpty()) {
+            for (View view : tips.keySet()) {
+                ITip tip = tips.get(view);
+                if (tip != null && tipManager.tipViewLayout != null) {
+                    tipManager.tipViewLayout.removeTip(tip);
+                }
+            }
+            tips.clear();
         }
     }
 
@@ -452,6 +518,13 @@ public class TipManager {
      * @param direction     三角形指向 see {@link ITip.Triangle}
      */
     private Rect initTip(View targetView, ITip tip, CharSequence text, @ITip.TriangleDirection int direction) {
+        if (DEBUG) {
+            if (targetView.getWidth() == 0 || targetView.getHeight() == 0) {
+                throw new IllegalStateException("此异常只会在debug中或在白名单列表中出现\n" +
+                        targetView + "没有layout或者measure，\n" +
+                        "可调用tipmanager.checkViewCanShowTip(targetView, l)并在回调中调用showTipView方法。");
+            }
+        }
         Rect rect = new Rect(0, 0, targetView.getWidth(), targetView.getHeight());
         int[] loc = new int[2];
         targetView.getLocationInWindow(loc);
@@ -475,7 +548,7 @@ public class TipManager {
         tips.put(view, tip);
     }
 
-    private ITip findTip(View targetView) {
+    public ITip findTip(View targetView) {
         if (tips != null) {
             return tips.get(targetView);
         }
@@ -508,7 +581,8 @@ public class TipManager {
             return;
         }
         int flags = context.getWindow().getAttributes().flags;
-        if ((flags & WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN) {
+        if ((flags&WindowManager.LayoutParams.FLAG_FULLSCREEN) == WindowManager.LayoutParams.FLAG_FULLSCREEN
+                || (flags&WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) == WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS) {
             statusHeight = 0;
             return;
         }

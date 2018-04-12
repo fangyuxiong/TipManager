@@ -3,6 +3,7 @@ package com.xfy.tipviewmanager.tip;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.ColorInt;
 import android.support.annotation.IntDef;
+import android.view.View;
 
 import com.xfy.tipviewmanager.anim.ITipAnimation;
 
@@ -164,6 +165,10 @@ public interface ITip {
      * @param x
      * @param y
      * @return this object
+     *
+     * use {@link com.xfy.tipviewmanager.TipManager#showTipView(View, CharSequence, int, int, int)}
+     * or {@link com.xfy.tipviewmanager.TipManager#showAdvancedTip(View, CharSequence, int, int, ITextDelegate, int)}
      */
+    @Deprecated
     ITip setTranslateXY(float x, float y);
 }
